@@ -47,7 +47,7 @@ const DomainAnalysis = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/analyze-domain?domain=${encodeURIComponent(domain)}`);
+      const response = await fetch(`http://localhost:8000/api/analyze-domain?domain=${encodeURIComponent(domain)}`);
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }

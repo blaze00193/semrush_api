@@ -27,7 +27,7 @@ app.add_middleware(
 SEMRUSH_API_KEY = os.getenv("SEMRUSH_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-@app.get("/analyze-domain")
+@app.get("/api/analyze-domain")
 def analyze_domain(
     domain: str = Query(..., description="Enter the domain to analyze"),
 ):
