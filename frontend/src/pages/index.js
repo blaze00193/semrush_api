@@ -7,6 +7,7 @@ import RankingMap from "./RankingMap";
 import SubPostion from "./SubPostion";
 import AllPostion from "./AllPosition";
 import Trends from "./Trends";
+import _ from "lodash";
 
 const DomainAnalysis = () => {
   const { t } = useTranslation();
@@ -20,22 +21,22 @@ const DomainAnalysis = () => {
     {
       key: "rankingMap",
       label: t("Competive search ranking map"),
-      component: data?.[0] ? <RankingMap data={data[0]} /> : null,
+      component: _.get(data, '[0]') ? <RankingMap data={data[0]} /> : null,
     },
     {
       key: "subPositon",
       label: t("SubPostion"),
-      component: data?.[1] ? <SubPostion data={data[1]} /> : null,
+      component: _.get(data, '[1]') ? <SubPostion data={data[1]} /> : null,
     },
     {
       key: "allPositon",
       label: t("AllPostion"),
-      component: data?.[2] ? <AllPostion data={data[2]} /> : null,
+      component: _.get(data, '[2]') ? <AllPostion data={data[2]} /> : null,
     },
     {
       key: "adwordsKey",
       label: t("Adwords"),
-      component: data?.[3] ? <Trends data={data[3]} /> : null,
+      component: _.get(data, '[3]') ? <Trends data={data[3]} /> : null,
     },
   ];
 
