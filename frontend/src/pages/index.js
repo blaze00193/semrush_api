@@ -111,7 +111,7 @@ const DomainAnalysis = () => {
             <CircularProgress />
           </Box>
         ) : data ? (
-          components[activeComponent]?.component || (
+          _.get(components[activeComponent], 'component') || (
             <Box sx={{ textAlign: "center", my: 2 }}>{t("選択したコンポーネントのデータがありません。")}</Box>
           )
         ) : (
