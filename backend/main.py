@@ -31,7 +31,6 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 def analyze_domain(
     domain: str = Query(..., description="Enter the domain to analyze"),
 ):
-    date = datetime.now().strftime("%y%m15");
     # SEMrush API URL
     semrush_urls = [
         f"https://api.semrush.com/?type=domain_organic_organic&display_limit=10&key={SEMRUSH_API_KEY}&domain={domain}&database=us",
@@ -49,11 +48,6 @@ def analyze_domain(
 
             # Check for HTTP errors
             if semrush_response.status_code == 403:
-                if "unsupported_country_region_territory" in semrush_response.text:
-                    raise HTTPException(
-                        status_code=403,
-                        detail=f"The database is not supported. Try a different database (e.g., 'us', 'uk')."
-                    )
                 raise HTTPException(
                     status_code=403,
                     detail="Invalid SEMrush API key or access denied. Verify your key and permissions."
