@@ -1,4 +1,4 @@
-import { Typography, Grid, Box } from "@mui/material";
+import { Typography, Grid } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import "../i18n";
 import DataChart from "@/components/DataChart";
@@ -8,10 +8,10 @@ const Trends = ({data}) => {
     return(
         <>
             <Grid item xs={12}>
-                <DataChart data={data.semrush_data} />
+                {data && data.semrush_data ? (<DataChart data={data.semrush_data} />): (<Typography>{t("No data available for the selected component.")}</Typography>)}
             </Grid>       
             <Grid item xs={12}>
-                <Typography>{data.ai_insight ? data.ai_insight : t("noDataAvailable")}</Typography>
+                <Typography>{data && data.ai_insight ? data.ai_insight : t("No data available for the selected component.")}</Typography>
             </Grid>
         </>
     )

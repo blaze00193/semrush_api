@@ -15,18 +15,39 @@ const DomainAnalysis = () => {
   const [data, setData] = useState(null);
   const [activeComponent, setActiveComponent] = useState(0); // Index of the active component
 
+  // List of components to render dynamically
   const components = [
-    { key: "rankingMap", label: t("Competive search ranking map"), component: <RankingMap data={data?.[0]} /> },
-    { key: "subPositon", label: t("SubPostion"), component: <SubPostion data={data?.[1]} /> },
-    { key: "allPositon", label: t("AllPostion"), component: <AllPostion data={data?.[2]} /> },
-    { key: "adwordsKey", label: t("Adwords"), component: <Trends data={data?.[3]} /> }
-    // Add more components as needed
+    {
+      key: "rankingMap",
+      label: t("Competive search ranking map"),
+      component: data?.[0] ? <RankingMap data={data[0]} /> : null,
+    },
+    {
+      key: "subPositon",
+      label: t("SubPostion"),
+      component: data?.[1] ? <SubPostion data={data[1]} /> : null,
+    },
+    {
+      key: "allPositon",
+      label: t("AllPostion"),
+      component: data?.[2] ? <AllPostion data={data[2]} /> : null,
+    },
+    {
+      key: "adwordsKey",
+      label: t("Adwords"),
+      component: data?.[3] ? <Trends data={data[3]} /> : null,
+    },
   ];
 
   const handleAnalyze = async () => {
+    if (!domain.trim()) {
+      alert(t("Please enter a valid domain"));
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/analyze-domain?domain=${domain}`);
+      const response = await fetch(`http://localhost:8000/analyze-domain?domain=${encodeURIComponent(domain)}`);
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
@@ -84,12 +105,17 @@ const DomainAnalysis = () => {
         }}
       >
         <InputDomain domain={domain} setDomain={setDomain} onClick={handleAnalyze} />
-        {loading && (
+        {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
             <CircularProgress />
           </Box>
+        ) : data ? (
+          components[activeComponent]?.component || (
+            <Box sx={{ textAlign: "center", my: 2 }}>{t("選択したコンポーネントのデータがありません。")}</Box>
+          )
+        ) : (
+          <Box sx={{ textAlign: "center", my: 2 }}>{t("ドメインを入力して「分析する」をクリックすると、結果が表示されます。")}</Box>
         )}
-        {data && components[activeComponent]?.component}
       </Grid>
     </Grid>
   );

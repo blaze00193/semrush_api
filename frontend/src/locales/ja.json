@@ -10,7 +10,8 @@
     "Position": "順位",
     "Previous Position":"前順位",
     "Traffic(%)":"トラフィック(%)",
-    "SearchVolume": "検索ボリューム"
+    "SearchVolume": "検索ボリューム",
+    "No data available for the selected component." : "選択したコンポーネントにはデータがありません。"
   }
   
 

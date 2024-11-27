@@ -8,13 +8,10 @@ const AllPostion = ({data}) => {
     return(
         <>
             <Grid item xs={12}>
-                {/* <Typography variant="h5" sx={{ mb: 2 }}>
-                    {t("Incoming Keywords")} :
-                </Typography> */}
-                <AllPosTable data={data.semrush_data} />
+                { data && data.semrush_data ? (<AllPosTable data={data.semrush_data} />) : (<Typography>{t("No data available for the selected component.")}</Typography>)}
             </Grid>       
             <Grid item xs={12}>
-                <Typography>{data.ai_insight ? data.ai_insight : t("noDataAvailable")}</Typography>
+                <Typography>{ data && data.ai_insight ? data.ai_insight : t("No data available for the selected component.")}</Typography>
             </Grid>
         </>
     )
