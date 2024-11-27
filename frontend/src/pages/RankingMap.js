@@ -11,7 +11,7 @@ const RankingMap = ({data}) => {
                 <Typography variant="h6" sx={{ mb: 2 }}>
                 {t("Competive search ranking map")} :
                 </Typography>
-                {data && data.semrush_data ?                
+                {data && data.semrush_data ?               
                     (<BubbleChart data={data.semrush_data} />) : (<Typography>{t("No data available for the selected component.")}</Typography>)
                 }
             </Grid>  
