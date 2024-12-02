@@ -6,7 +6,9 @@ from io import StringIO
 import openai
 from dotenv import load_dotenv
 import os
-from datetime import datetime
+from pydantic import BaseModel
+import hashlib
+from typing import List
 
 # Load environment variables from .env file
 load_dotenv()
@@ -64,27 +66,7 @@ def analyze_domain(
             try:
                 csv_data = semrush_response.text
                 csv_reader = csv.DictReader(StringIO(csv_data), delimiter=';')
-                parsed_data = [row for row in csv_reader]  # Convert CSV rows to a list of dictionaries
-                # Generate OpenAI prompt
-                openai_prompt = f"""
-                    以下はSEMrush APIエンドポイント {url} から取得したデータです:
-                    {parsed_data}
-                    このデータを分析して、改善点を日本語で説明してください。
-                    """
-                
-                # Call OpenAI API
-                openai.api_key = OPENAI_API_KEY
-                openai_response = openai.chat.completions.create(
-                    model="gpt-4",
-                    messages=[
-                        {"role": "system", "content": "あなたはSEOの専門家です。"},
-                        {"role": "user", "content": openai_prompt},
-                    ],
-                )
-                
-                # Extract AI insights
-                ai_insight = openai_response.choices[0].message.content
-            
+                parsed_data = [row for row in csv_reader]  # Convert CSV rows to a list of dictionaries         
 
             except Exception as e:
                 raise HTTPException(
@@ -96,7 +78,7 @@ def analyze_domain(
             results.append({
                 "endpoint": url,
                 "semrush_data": parsed_data,
-                "ai_insight": ai_insight,
+                # "ai_insight": ai_insight,
             })
 
         except requests.exceptions.RequestException as e:
@@ -111,3 +93,40 @@ def analyze_domain(
                 detail=f"An unexpected error occurred: {str(e)}"
             )
     return results
+
+cache = {}
+class AIInsightRequest(BaseModel):
+    data: List[dict]
+
+def generate_hash(data):
+    return hashlib.md5(str(data).encode('utf-8')).hexdigest()
+
+@app.post("/api/openai-insight")
+async def get_ai_insight(request: AIInsightRequest):
+    input_hash = generate_hash(request.data)
+    if input_hash in cache:
+        return {"cached":True, "ai_insight": cache[input_hash]}
+    # Generate OpenAI prompt
+    openai_prompt = f"""
+        以下はSEMrushから取得したデータです:
+        {request.data}
+        このデータを分析して、改善点やSEOの洞察を日本語で説明してください。
+        """
+    
+    try:
+        # Call OpenAI API
+        openai.api_key = OPENAI_API_KEY
+        openai_response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "あなたはSEOの専門家です。"},
+                {"role": "user", "content": openai_prompt},
+            ],
+        )      
+        # Extract AI insights
+        ai_insight = openai_response.choices[0].message.content
+        cache[input_hash] = ai_insight
+        return {"ai_insight" : ai_insight}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
