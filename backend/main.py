@@ -78,7 +78,6 @@ def analyze_domain(
             results.append({
                 "endpoint": url,
                 "semrush_data": parsed_data,
-                # "ai_insight": ai_insight,
             })
 
         except requests.exceptions.RequestException as e:
@@ -110,7 +109,8 @@ async def get_ai_insight(request: AIInsightRequest):
     openai_prompt = f"""
         以下はSEMrushから取得したデータです:
         {request.data}
-        このデータを分析して、改善点やSEOの洞察を日本語で説明してください。
+        与えられたデータについて2つの文章で改善点を教えてください。
+        文章の前には番号を付けて日本語で教えてください。
         """
     
     try:

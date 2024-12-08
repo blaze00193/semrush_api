@@ -45,7 +45,7 @@ const DomainAnalysis = () => {
       alert(t("Please enter a valid domain"));
       return;
     }
-
+  
     setLoading(true);
     try {
       const response = await fetch(`http://localhost:8000/api/analyze-domain?domain=${encodeURIComponent(domain)}`);
@@ -54,6 +54,20 @@ const DomainAnalysis = () => {
       }
       const result = await response.json();
       setData(result);
+  
+      // Create a JSON file for download
+      const jsonBlob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(jsonBlob);
+  
+      // Create a temporary anchor element to trigger the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${domain}_analysis.json`;  // Name the file based on the domain
+      document.body.appendChild(a); // Append to the body to make it part of the DOM
+      a.click(); // Simulate a click on the anchor element to trigger download
+      document.body.removeChild(a); // Remove the anchor element from the DOM
+      URL.revokeObjectURL(url); // Clean up the object URL
+  
     } catch (error) {
       console.error("Error fetching domain analysis:", error);
       setData({ error: error.message });
@@ -61,7 +75,7 @@ const DomainAnalysis = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <Grid container spacing={2} sx={{ marginTop: "40px", maxWidth: "1440px", mx: "auto" }}>
       {/* Sidebar */}
